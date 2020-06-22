@@ -1,0 +1,30 @@
+pipeline{
+agent any
+stages{
+    stage("sonar-check"){
+    steps{
+    script{
+                      withSonarQubeEnv('sonarqube') { 
+                      sh "gradle sonarqube"
+                       }
+                      timeout(time: 1, unit: 'HOURS') {
+                      def qg = waitForQualityGate()
+                      if (qg.status != 'OK') {
+                           error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                      }
+                    }
+		   
+                  }
+                }  
+              }
+              stage("Docker build"){
+        steps{
+        
+        sh 'docker build -t ijazu/irctc:$BUILD_NUMBER .'
+        sh 'docker push ijazu/irctc:$BUILD_NUMBER'
+    
+}}
+
+              }
+              }
+             
