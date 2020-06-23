@@ -8,6 +8,6 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Running build automation'
-                sh './gradlew build --no-daemon;nohup ./gradlew npm_start'
+                sh './gradlew build --no-daemon;nohup ./gradlew npm_start &'
                 archiveArtifacts artifacts: 'dist/trainSchedule.zip'
                 }}}}
